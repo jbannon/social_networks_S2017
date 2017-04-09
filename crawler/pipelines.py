@@ -21,7 +21,7 @@ class CrawlerPipeline(object):
         articles_seen = [json.loads(line)['url'] for line in self.file.read().splitlines()]
         self.articles_seen = set(articles_seen)
 
-        self.dirname = os.path.join("articles", spider.allowed_domains[0])
+        self.dirname = os.path.join("articles", spider.allowed_domains[0]) + "/html"
         if not os.path.exists(self.dirname):
             os.makedirs(self.dirname)
 
