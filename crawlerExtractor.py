@@ -49,7 +49,7 @@ def getContentFromBoilerpipe(url):
 def getContent(url):
 	content, title, authors, date = (u'', )*4
 	try:
-		content, authors, title, date = getContentFromNewspaper(url)
+		content, title, authors, date = getContentFromNewspaper(url)
 	except:
 		try:
 			content = getContentFromBoilerpipe(url)
