@@ -1,13 +1,13 @@
 from newspaper import Article
-from boilerpipe.extract import Extractor
-import urllib2, requests
+# from boilerpipe.extract import Extractor
+import urllib2
 import io, json
 from bs4 import BeautifulSoup, SoupStrainer
 from timeout import timeout
 
 hdr = { 'User-Agent' : 'super friendly bot' }
 MIN_ARTICLE_LENGTH = 500
-MAX_ARTICLES = 10
+MAX_ARTICLES = 50
 
 def getRelatedURLs(url):
 	relatedURLs = []
@@ -39,22 +39,22 @@ def getContentFromNewspaper(url):
 	date = str(article.publish_date)
 	return content, title, authors, date
 
-@timeout(10)
-def getContentFromBoilerpipe(url):
-	content = u''
-	extractor = Extractor(extractor='ArticleExtractor', url = url)
-	content = extractor.getText()
-	return content
+# @timeout(10)
+# def getContentFromBoilerpipe(url):
+# 	content = u''
+# 	extractor = Extractor(extractor='ArticleExtractor', url = url)
+# 	content = extractor.getText()
+# 	return content
 
 def getContent(url):
 	content, title, authors, date = (u'', )*4
 	try:
 		content, title, authors, date = getContentFromNewspaper(url)
 	except:
-		try:
-			content = getContentFromBoilerpipe(url)
-		except:
-			pass
+		# try:
+		# 	content = getContentFromBoilerpipe(url)
+		# except:
+		pass
 	return content, title, authors, date
 
 def isPotentialArticle(url):
@@ -69,6 +69,10 @@ nonArticles = ["video", "picture", "image", "facebook", "twitter", "digg", "pint
 with open('inputSites.txt', 'r') as input, io.open('articles.txt', 'w', encoding="utf-8") as output:
 	for main in input:
 		main = main.strip()
+		cat = main.split(",")[1]
+		fact = main.split(",")[2
+		bias = main.split(",")[3]
+		main = main.split(",")[0]
 		if (main[-1] == "/"):	# for concatenation of sublinks which start with "/"
 			main = main[:-1]
 		toVisit = [main]
@@ -82,7 +86,7 @@ with open('inputSites.txt', 'r') as input, io.open('articles.txt', 'w', encoding
 
 			if (url == main) or (url != main and len(content) > MIN_ARTICLE_LENGTH):
 				if len(content) > MIN_ARTICLE_LENGTH:
-					data = {"main": main, "url" : url, "title" : title, "date" : date, "authors" : authors, "content" : content}
+					data = {"main": main, "category" : cat, "fact" : fact, "bias" : bias, "url" : url, "title" : title, "date" : date, "authors" : authors, "content" : content}
 					output.write(json.dumps(data, ensure_ascii=False))
 					output.write(u'\n')
 					listlinks.append(url)
@@ -94,10 +98,11 @@ with open('inputSites.txt', 'r') as input, io.open('articles.txt', 'w', encoding
 							relatedURL = main + relatedURL
 						elif relatedURL[0] != "h":
 							relatedURL = main + "/" + relatedURL
-						if main[5:] in relatedURL:						# if https links fetched but main is http
+						if main[5:] in relatedURL:
 							if relatedURL not in toVisitandVisited:
 								toVisit.append(relatedURL)
 								toVisitandVisited.append(relatedURL)
+		print main, len(listlinks)
 		listlinks = []
 		toVisit = []
 		relatedURLs = []
