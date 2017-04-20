@@ -70,7 +70,7 @@ with open('inputSites.txt', 'r') as input, io.open('articles.txt', 'w', encoding
 	for main in input:
 		main = main.strip()
 		cat = main.split(",")[1]
-		fact = main.split(",")[2
+		fact = main.split(",")[2]
 		bias = main.split(",")[3]
 		main = main.split(",")[0]
 		if (main[-1] == "/"):	# for concatenation of sublinks which start with "/"
